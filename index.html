@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STEAM Who?</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      margin: 20px;
+    }
+
+    #game-container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    h3 {
+      font-size: 10px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #007bff;
+      color: #fff;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    #question-container,
+    #result-container {
+      display: none;
+      margin-top: 20px
+    }
+
+    #character-stats {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: left;
+      margin-top: 20px;
+      display: none;
+    }
+
+    #character-stats h2 {
+      text-align: center;
+    }
+    
+    #character-list {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    #character-list li {
+      cursor: pointer;
+      color: #007bff;
+    }
+
+    #character-list li:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="game-container">
+    <h1 id="question">STEAM Who?</h1>
+
+    <div id="start-container">
+      <h2>Personaggi disponibili:</h2>
+      <h3>(clicca su un personaggio per vedere più informazioni)</h3>
+      <ul id="character-list">
+        <li onclick="showCharacterStats('Stephen_Wozniak')">Stephen Gary Wozniak</li>
+        <li onclick="showCharacterStats('Margherita_Hack')">Margherita Hack</li>
+        <li onclick="showCharacterStats('Rita_Levi_Montalcini')">Rita Levi-Montalcini</li>
+        <li onclick="showCharacterStats('Marie_Curie')">Maria Salomea Sklodowska-Curie</li>
+        <li onclick="showCharacterStats('Albert_Einstein')">Albert Einstein</li>
+        <li onclick="showCharacterStats('Robert_Oppenheimer')">Julius Robert Oppenheimer</li>
+        <li onclick="showCharacterStats('William_Gates')">William Henry Gates</li>
+        <li onclick="showCharacterStats('Mark_Zuckerberg')">Mark Elliot Zuckerberg</li>
+        <li onclick="showCharacterStats('Alan_Turing')">Alan Mathison Turing</li>
+        <li onclick="showCharacterStats('Nikola_Tesla')">Nikola Tesla</li>
+        <li onclick="showCharacterStats('Steve_Jobs')">Steven Paul Jobs</li>
+        <li onclick="showCharacterStats('Stephen_Hawking')">Stephen William Hawking</li>
+        <li onclick="showCharacterStats('Leonardo_da_Vinci')">Leonardo da Vinci</li>
+        <li onclick="showCharacterStats('Isaac_Newton')">Isaac Newton</li>
+        <li onclick="showCharacterStats('Ada_Lovelace')">Augusta Ada Byron</li>
+        <li onclick="showCharacterStats('Rosalind_Franklin')">Rosalind Elsie Franklin</li>
+        <li onclick="showCharacterStats('Margaret_Hamilton')">Margaret Hamilton</li>
+        <li onclick="showCharacterStats('Elon_Musk')">Elon Reeve Musk</li>
+        <li onclick="showCharacterStats('Ada_Yonath')">Ada Yonath</li>
+        <li onclick="showCharacterStats('Jane_Goodall')">Jane Morris Goodall</li>
+        <li onclick="showCharacterStats('Galileo_Galilei')">Galileo Galilei</li>
+        <li onclick="showCharacterStats('Richard_Feynman')">Richard Phillips Feynman</li>
+        <li onclick="showCharacterStats('Thomas_Edison')">Thomas Alva Edison</li>
+        <li onclick="showCharacterStats('Charles_Darwin')">Charles Robert Darwin</li>
+      </ul>
+      <button onclick="startGame()">Inizia il gioco</button>
+    </div>
+
+    <div id="question-container">
+      <button onclick="elaborate_answer(true)">Sì</button>
+      <button onclick="elaborate_answer(false)">No</button>
+    </div>
+
+    <div id="result-container">
+      <h1 id="result"></h1>
+      <button onclick="restart()">Ricomincia</button>
+    </div>
+  </div>
+
+  <div id="character-stats"></div>
+
+  <script>
+    let characters = {
+      Stephen_Wozniak: {Name: "Stephen", Surname: "Wozniak", Gender: "uomo", Has_Middle_Names: true, Middle_Name: "Gary", Birth_Year: 1950, Living: true, Nobel_Prize: false, Working_Field: "Informatica", Nationality: "Statunitense"},
+      Margherita_Hack: {Name: "Margherita", Surname: "Hack", Gender: "donna", Has_Middle_Names: false, Birth_Year: 1922, Living: false, Nobel_Prize: false, Working_Field: "Astrofisica", Nationality: "Italiana"},
+      Rita_Levi_Montalcini: {Name: "Rita", Surname: "Levi-Montalcini", Gender: "donna", Has_Middle_Names: false, Birth_Year: 1909, Living: false, Nobel_Prize: true, Working_Field: "Neurologia", Nationality: "Italiana"},
+      Marie_Curie: {Name: "Maria", Surname: "Sklodowska-Curie", Gender: "donna", Has_Middle_Names: true, Middle_Name: "Salomea", Birth_Year: 1867, Living: false, Nobel_Prize: true, Working_Field: "Fisica, Chimica e Matematica", Nationality: "Polacca"},
+      Albert_Einstein: {Name: "Albert", Surname: "Einstein", Gender: "uomo", Has_Middle_Names: false, Birth_Year: 1879, Living: false, Nobel_Prize: true, Working_Field: "Fisica", Nationality: "Tedesca"},
+      Robert_Oppenheimer: {Name: "Julius", Surname: "Oppenheimer", Gender: "uomo", Has_Middle_Names: true, Middle_Name: "Robert", Birth_Year: 1904, Living: false, Nobel_Prize: false, Working_Field: "Fisica", Nationality: "Statunitense"},
+      William_Gates: {Name: "William", Surname: "Gates", Gender: "uomo", Has_Middle_Names: true, Middle_Name: "Henry", Birth_Year: 1955, Living: true, Nobel_Prize: false, Working_Field: "Informatica", Nationality: "Statunitense"},
+      Mark_Zuckerberg: {Name: "Mark", Surname: "Zuckerberg", Gender: "uomo", Has_Middle_Names: true, Middle_Name: "Elliot", Birth_Year: 1984, Living: true, Nobel_Prize: false, Working_Field: "Informatica", Nationality: "Statunitense"},
+      Alan_Turing: {Name: "Alan", Surname: "Turing", Gender: "uomo", Has_Middle_Names: true, Middle_Name: "Mathison", Birth_Year: 1912, Living: false, Nobel_Prize: false, Working_Field: "Matematica e Informatica", Nationality: "Inglese"},
+      Nikola_Tesla: {Name: "Nikola", Surname: "Tesla", Gender: "uomo", Has_Middle_Names: false, Birth_Year: 1856, Living: false, Nobel_Prize: false, Working_Field: "Ingegneria Elettrica e Fisica", Nationality: "Serba"},
+      Steve_Jobs: {Name: "Steven", Surname: "Jobs", Gender: "uomo", Has_Middle_Names: true, Middle_Name: "Paul", Birth_Year: 1955, Living: false, Nobel_Prize: false, Working_Field: "Tecnologia", Nationality: "Statunitense"},
+      Stephen_Hawking: {Name: "Stephen", Surname: "Hawking", Gender: "uomo", Has_Middle_Names: true, Middle_Name: "William", Birth_Year: 1942, Living: false, Nobel_Prize: false, Working_Field: "Fisica, Astrofisica, Cosmologia e Matematica", Nationality: "Inglese"},
+      Leonardo_da_Vinci: {Name: "Leonardo", Surname: "da Vinci", Gender: "uomo", Has_Middle_Names: false, Birth_Year: 1452, Living: false, Nobel_Prize: false, Working_Field: "Arte e Scienza", Nationality: "Italiana"},
+      Isaac_Newton: {Name: "Isaac", Surname: "Newton", Gender: "uomo", Has_Middle_Names: false, Birth_Year: 1643, Living: false, Nobel_Prize: false, Working_Field: "Fisica", Nationality: "Inglese"},
+      Ada_Lovelace: {Name: "Augusta", Surname: "Byron", Gender: "donna", Has_Middle_Names: true, Middle_Name: "Ada", Birth_Year: 1815, Living: false, Nobel_Prize: false, Working_Field: "Matematica", Nationality: "Inglese"},
+      Rosalind_Franklin: {Name: "Rosalind", Surname: "Franklin", Gender: "donna", Has_Middle_Names: true, Middle_Name: "Elsie", Birth_Year: 1920, Living: false, Nobel_Prize: false, Working_Field: "Chimica e Biochimica", Nationality: "Inglese"},
+      Margaret_Hamilton: {Name: "Margaret", Surname: "Hamilton", Gender: "donna", Has_Middle_Names: true, Middle_Name: "Heafield", Birth_Year: 1936, Living: true, Nobel_Prize: false, Working_Field: "Informatica", Nationality: "Statunitense"},
+      Elon_Musk: {Name: "Elon", Surname: "Musk", Gender: "uomo", Has_Middle_Names: true, Middle_Name: "Reeve", Birth_Year: 1971, Living: true, Nobel_Prize: false, Working_Field: "Ingegneria", Nationality: "Sudafricana"},
+      Ada_Yonath: {Name: "Ada", Surname: "Yonath", Gender: "donna", Has_Middle_Names: false, Birth_Year: 1939, Living: true, Nobel_Prize: true, Working_Field: "Chimica", Nationality: "Israeliana"},
+      Jane_Goodall: {Name: "Jane", Surname: "Goodall", Gender: "donna", Has_Middle_Names: true, Middle_Name: "Morris", Birth_Year: 1934, Living: true, Nobel_Prize: false, Working_Field: "Etologia e Antropologia", Nationality: "Inglese"},
+      Galileo_Galilei: {Name: "Galileo", Surname: "Galilei", Gender: "uomo", Has_Middle_Names: false, Birth_Year: 1564, Living: false, Nobel_Prize: false, Working_Field: "Fisica, Astronomia, Filosofia e Matematica", Nationality: "Italiana"},
+      Richard_Feynman: {Name: "Richard", Surname: "Feynman", Gender: "uomo", Has_Middle_Names: true, Middle_Name: "Phillips", Birth_Year: 1918, Living: false, Nobel_Prize: true, Working_Field: "Fisica", Nationality: "Statunitense"},
+      Thomas_Edison: {Name: "Thomas", Surname: "Edison", Gender: "uomo", Has_Middle_Names: true, Middle_Name: "Alva", Birth_Year: 1847, Living: false, Nobel_Prize: false, Working_Field: "Ingegneria Elettrica", Nationality: "Statunitense"},
+      Charles_Darwin: {Name: "Charles", Surname: "Darwin", Gender: "uomo", Has_Middle_Names: true, Middle_Name: "Robert", Birth_Year: 1809, Living: false, Nobel_Prize: false, Working_Field: "Biologia", Nationality: "Inglese"}
+    };
+
+    function showCharacterStats(characterKey) {
+      let character = characters[characterKey];
+
+      let middleName = "";
+      if (character.Has_Middle_Names) {
+        middleName = character.Middle_Name + " ";
+      }
+
+      let stats = "<h2>" + character.Name + " " + middleName + character.Surname + "</h2>";
+      stats += "<p><strong>Genere:</strong> " + character.Gender + "</p>";
+      stats += "<p><strong>Anno Di Nascita:</strong> " + character.Birth_Year + "</p>";
+      stats += "<p><strong>In Vita:</strong> " + (character.Living ? 'Sì' : 'No') + "</p>";
+      stats += "<p><strong>Premio Nobel:</strong> " + (character.Nobel_Prize ? 'Sì' : 'No') + "</p>";
+      stats += "<p><strong>Ambito Di Lavoro:</strong> " + character.Working_Field + "</p>";
+      stats += "<p><strong>Nazionalità:</strong> " + character.Nationality + "</p>";
+
+      document.getElementById('character-stats').innerHTML = stats;
+      document.getElementById('character-stats').style.display = 'block';
+    }
+
+
+    let Possible_guesses = Object.values(characters);
+
+    let Won_Nobel_Prize_question_asked = false;
+    let Middle_names_question_asked = false;
+    let Gender_question_asked = false;
+    let Living_question_asked = false;
+    let Nationality_question_answer_yes = false;
+    let Working_field_question_answer_yes = false;
+    let Selected_year;
+    let Selected_nationality;
+    let Selected_gender;
+    let Selected_field;
+    let Selected_question;
+
+    function startGame() {
+      document.getElementById("start-container").style.display = "none";
+      document.getElementById("question-container").style.display = "block";
+      document.getElementById("result-container").style.display = "none";
+      document.getElementById("character-stats").style.display = "none";
+      resetGame();
+      generate_questions();
+    }
+
+    function elaborate_answer(answer) {
+      switch (Selected_question) {
+        case "Birth_question":
+          if (answer) {
+            Possible_guesses = Possible_guesses.filter(Persona => Persona.Birth_Year < Selected_year);
+          } else {
+            Possible_guesses = Possible_guesses.filter(Persona => Persona.Birth_Year >= Selected_year);
+          }
+          break;
+        case "Gender_question":
+          if (answer) {
+            Possible_guesses = Possible_guesses.filter(Persona => Persona.Gender.toLowerCase() === Selected_gender.toLowerCase());
+          } else {
+            Possible_guesses = Possible_guesses.filter(Persona => Persona.Gender.toLowerCase() !== Selected_gender.toLowerCase());
+          }
+          Gender_question_asked = true;
+          break;
+        case "Nationality_question":
+          if (answer) {
+            Possible_guesses = Possible_guesses.filter(Persona => Persona.Nationality.toLowerCase() === Selected_nationality.toLowerCase());
+            Nationality_question_answer_yes = true;
+          } else {
+            Possible_guesses = Possible_guesses.filter(Persona => Persona.Nationality.toLowerCase() !== Selected_nationality.toLowerCase());
+          }
+          break;
+        case "Working_field_question":
+          if (answer) {
+            Possible_guesses = Possible_guesses.filter(Persona => Persona.Working_Field.toLowerCase() === Selected_field.toLowerCase());
+            Working_field_question_answer_yes = true;
+          } else {
+            Possible_guesses = Possible_guesses.filter(Persona => Persona.Working_Field.toLowerCase() !== Selected_field.toLowerCase());
+          }
+          break;
+        case "Living_question":
+          if (answer) {
+            Possible_guesses = Possible_guesses.filter(Persona => Persona.Living === true);
+          } else {
+            Possible_guesses = Possible_guesses.filter(Persona => Persona.Living === false);
+          }
+          Living_question_asked = true;
+          break;
+        case "Won_Nobel_Prize_question":
+          if (answer) {
+            Possible_guesses = Possible_guesses.filter(Persona => Persona.Nobel_Prize === true);
+          } else {
+            Possible_guesses = Possible_guesses.filter(Persona => Persona.Nobel_Prize === false);
+          }
+          Won_Nobel_Prize_question_asked = true;
+          break;
+        case "Middle_names_question":
+          if (answer) {
+            Possible_guesses = Possible_guesses.filter(Persona => Persona.Has_Middle_Names === true);
+          } else {
+            Possible_guesses = Possible_guesses.filter(Persona => Persona.Has_Middle_Names === false);
+          }
+          Middle_names_question_asked = true;
+          break;
+        default:
+          break;
+      }
+      generate_questions();
+    }
+
+    function generate_questions() {
+      if (Possible_guesses.length === 1) {
+        end_game(true);
+        return;
+      } else if (Possible_guesses.length === 0) {
+        end_game(false);
+        return;
+      }
+
+      let Random_question = Math.floor(Math.random() * 7);
+      switch (Random_question) {
+        case 0:
+          Selected_year = Math.floor(Possible_guesses.reduce((sum, Personaggio) => sum + Personaggio.Birth_Year, 0) / Possible_guesses.length);
+          Selected_question = "Birth_question";
+          document.getElementById("question").innerText = "La persona è nata prima del " + Selected_year + "?";
+          break;
+        case 1:
+          if (!Gender_question_asked) {
+            Selected_gender = Possible_guesses[Math.floor(Math.random() * Possible_guesses.length)].Gender;
+            Selected_question = "Gender_question";
+            document.getElementById("question").innerText = "La persona è un " + Selected_gender + "?";
+          } else {
+            generate_questions();
+          }
+          break;
+        case 2:
+          if (!Nationality_question_answer_yes) {
+            Selected_nationality = Possible_guesses[Math.floor(Math.random() * Possible_guesses.length)].Nationality;
+            Selected_question = "Nationality_question";
+            document.getElementById("question").innerText = "La persona è " + Selected_nationality + "?";
+          } else {
+            generate_questions();
+          }
+          break;
+        case 3:
+          if (!Working_field_question_answer_yes) {
+            Selected_field = Possible_guesses[Math.floor(Math.random() * Possible_guesses.length)].Working_Field;
+            Selected_question = "Working_field_question";
+            document.getElementById("question").innerText = "La persona lavora nel campo: " + Selected_field + "?";
+          } else {
+            generate_questions();
+          }
+          break;
+        case 4:
+          if (!Living_question_asked) {
+            Selected_question = "Living_question";
+            document.getElementById("question").innerText = "La persona è ancora in vita?";
+          } else {
+            generate_questions();
+          }
+          break;
+        case 5:
+          if (!Won_Nobel_Prize_question_asked) {
+            Selected_question = "Won_Nobel_Prize_question";
+            document.getElementById("question").innerText = "La persona ha vinto un premio Nobel?";
+          } else {
+            generate_questions();
+          }
+          break;
+        case 6:
+          if (!Middle_names_question_asked) {
+            Selected_question = "Middle_names_question";
+            document.getElementById("question").innerText = "La persona ha uno o più secondi nomi?";
+          } else {
+            generate_questions();
+          }
+          break;
+        default:
+          break;
+      }
+    }
+
+    function end_game(success) {
+      document.getElementById("question-container").style.display = "none";
+      document.getElementById("result-container").style.display = "block";
+      document.getElementById("question").innerText = ""
+      if (success) {
+        if (Possible_guesses[0].Has_Middle_Names) {
+          document.getElementById("result").innerText = "La persona è " + Possible_guesses[0].Name + " " + Possible_guesses[0].Middle_Name + " " + Possible_guesses[0].Surname;
+        } else {
+          document.getElementById("result").innerText = "La persona è " + Possible_guesses[0].Name + " " + Possible_guesses[0].Surname;
+        }
+      } else {
+        document.getElementById("result").innerText = "Non ci sono corrispondenze!";
+      }
+    }
+
+    function restart() {
+      document.getElementById("start-container").style.display = "block";
+      document.getElementById("question-container").style.display = "none";
+      document.getElementById("result-container").style.display = "none";
+      resetGame();
+    }
+
+    function resetGame() {
+      Won_Nobel_Prize_question_asked = false;
+      Middle_names_question_asked = false;
+      Gender_question_asked = false;
+      Living_question_asked = false;
+      Nationality_question_answer_yes = false;
+      Working_field_question_answer_yes = false;
+      Possible_guesses = Object.values(characters);
+    }
+  </script>
+</body>
+
+</html>
